@@ -11,26 +11,33 @@ const router = useRouter()
 
 const id = route.params.id
 
+
+// Necessário para distinção de um form que está editando
+// para um form que está criando um novo item
 const isEditando =  computed(() => {
   return id && id !== 'novo'
 })
 
+// Se estiver editando, pegar o autor pelo id
+// senão, ainda não há id.
 const autor = isEditando ? getAutorById(Number(id)) : null
 
+
+// Validações
 const schema = yup.object({
     name: yup.string().required('Nome obrigatório.'),
-    birthYear: yup.number().required('Ano de nascimento obrigatório')
+    birthYear: yup.number().required('Ano de nascimento obrigatório.').typeError('O valor inserido deve ser um número.')
 })
 
 const { handleSubmit, errors } = useForm({
     validationSchema: schema,
-    initialValues: autor ?? { name: '', birthYear: '' }
+    initialValues: autor ?? { name: '', birthYear: null }
 })
 
 const { value: nome } = useField('name')
 const { value: nascimento } = useField('birthYear')
 
-
+// Salva o autor na memória
 const salvarAutor = handleSubmit(values => {
 
     const novoAutor = {
@@ -54,17 +61,19 @@ const salvarAutor = handleSubmit(values => {
 </script>
 
 <template>
-    <div class="p-4 max-w-xl mx-auto">
-      <h1 class="text-2xl font-bold mb-4">
+    <div class="p-6 max-w-2xl mx-auto bg-white shadow-md rounded-xl">
+      <h1 class="text-3xl font-semibold text-gray-800 mb-6">
         {{ isEditando ? 'Editar Autor' : 'Novo Autor' }}
       </h1>
   
-      <form @submit.prevent="salvarAutor" class="space-y-4">
+      <form @submit.prevent="salvarAutor" class="space-y-5">
         <div>
-          <label class="block font-semibold">Nome</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nome</label>
           <input v-model="nome" class="input" placeholder="Nome do autor" />
           <span class="text-red-500 text-sm">{{ errors.name }}</span>
-          <label class="block font-semibold">Ano de nascimento</label>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Ano de nascimento</label>
           <input v-model="nascimento" class="input" placeholder="Ano de nascimento do autor" />
           <span class="text-red-500 text-sm">{{ errors.birthYear }}</span>
         </div>

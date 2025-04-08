@@ -13,7 +13,7 @@ const router = useRouter()
 
 const filtro = ref('')
 const campoOrdenacao = ref('id')
-const direcaoOrdenacao = ref('asc')
+const direcaoOrdenacao = ref('cresc')
 
 const livroSelecionado = ref(null)
 const showModal = ref(false)
@@ -39,8 +39,8 @@ const livrosFiltradosOrdenados = computed(() => {
     if (typeof valA === 'string') valA = valA.toLowerCase()
     if (typeof valB === 'string') valB = valB.toLowerCase()
 
-    if (valA < valB) return direcaoOrdenacao.value === 'asc' ? -1 : 1
-    if (valA > valB) return direcaoOrdenacao.value === 'asc' ? 1 : -1
+    if (valA < valB) return direcaoOrdenacao.value === 'cresc' ? -1 : 1
+    if (valA > valB) return direcaoOrdenacao.value === 'cresc' ? 1 : -1
     return 0
   })
 
@@ -58,62 +58,71 @@ function redirecionarPara(path) {
 </script>
 
 <template>
-  <div class="p-4">
-    <div class="flex justify-between items-center mb-4">
-      <h1 class="text-2xl font-bold">Livros</h1>
-      <button @click="redirecionarPara('/livros/novo')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-        Novo Livro
+  <div class="p-6 overflow-x-auto">
+    <div class="flex justify-between items-center mb-6 border-b pb-4">
+      <h1 class="text-3xl font-semibold text-gray-800">Livros</h1>
+      <button @click="redirecionarPara('/livros/novo')"
+        class="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition -translate-x-5">
+        + Novo Livro
       </button>
     </div>
 
-    <div class="mb-4 flex gap-4 flex-wrap">
+    <div class="mb-6 flex gap-4 flex-wrap">
       <input v-model="filtro" type="text" placeholder="Filtrar por título, autor, editora"
-        class="p-2 border rounded w-full md:w-1/3" />
+        class="px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none w-full md:w-1/3" />
 
-      <select v-model="campoOrdenacao" class="p-2 border rounded">
+      <select v-model="campoOrdenacao"
+        class="px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none">
         <option value="id">ID</option>
         <option value="year">Ano</option>
         <option value="title">Título</option>
       </select>
 
-      <select v-model="direcaoOrdenacao" class="p-2 border rounded">
-        <option value="asc">Crescente</option>
-        <option value="desc">Decrescente</option>
+      <select v-model="direcaoOrdenacao"
+        class="px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none">
+        <option value="cresc">Crescente</option>
+        <option value="decr">Decrescente</option>
       </select>
     </div>
 
-    <table class="w-full border text-left text-sm">
-      <thead class="bg-gray-100">
+    <table class="w-full border-collapse text-sm rounded-xl overflow-hidden shadow-sm min-w-[1000px]">
+      <thead class="bg-gray-100 text-gray-700">
         <tr>
-          <th class="p-2">Capa</th>
-          <th class="p-2">Título</th>
-          <th class="p-2">Ano</th>
-          <th class="p-2">Autor</th>
-          <th class="p-2">Editora</th>
-          <th class="p-2">Ações</th>
+          <th class="p-3 font-medium">Capa</th>
+          <th class="p-3 font-medium">Título</th>
+          <th class="p-3 font-medium">Ano</th>
+          <th class="p-3 font-medium">Autor</th>
+          <th class="p-3 font-medium">Editora</th>
+          <th class="p-3 font-medium">Ações</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="livro in livrosFiltradosOrdenados" :key="livro.id" class="hover:bg-gray-50">
-          <td class="p-2">
-            <img :src="livro.cover" alt="Capa" class="w-12 h-16 object-cover cursor-pointer"
+        <tr v-for="livro in livrosFiltradosOrdenados" :key="livro.id"
+          class="hover:bg-gray-50 border-t">
+          <td class="p-3 text-center">
+            <div class="flex justify-center">
+              <img :src="livro.cover" alt="Capa"
+              class="w-24 h-32 object-cover rounded shadow cursor-pointer transition-transform hover:scale-105 text-center"
               @click="abrirModal(livro)" />
+            </div>
           </td>
-          <td class="p-2">{{ livro.title }}</td>
-          <td class="p-2">{{ livro.year }}</td>
-          <td class="p-2">
-            <button class="text-blue-600 underline" @click="redirecionarPara(`/autores/${livro.authorId}`)">
+          <td class="p-3 text-gray-800 text-center font-medium">{{ livro.title }}</td>
+          <td class="p-3 text-center font-medium">{{ livro.year }}</td>
+          <td class="p-3 text-center font-medium">
+            <button class="text-blue-600 hover:underline"
+              @click="redirecionarPara(`/autores/${livro.authorId}`)">
               {{ getAutorById(livro.authorId).name }}
             </button>
           </td>
-          <td class="p-2">
-            <button class="text-blue-600 underline" @click="redirecionarPara(`/editoras/${livro.publisherId}`)">
+          <td class="p-3 text-center font-medium">
+            <button class="text-blue-600 hover:underline"
+              @click="redirecionarPara(`/editoras/${livro.publisherId}`)">
               {{ getEditoraById(livro.publisherId).name }}
             </button>
           </td>
-          <td class="p-2">
+          <td class="p-3 text-center">
             <button @click="redirecionarPara(`/livros/${livro.id}`)"
-              class="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded">
+              class="bg-orange-400 hover:bg-orange-500 text-white px-3 py-1 rounded-lg transition">
               Editar
             </button>
           </td>
@@ -121,14 +130,13 @@ function redirecionarPara(path) {
       </tbody>
     </table>
 
-    <Dialog v-model:visible="showModal" modal header="Detalhes do Livro" :style="{ width: '400px' }">
-      <div v-if="livroSelecionado">
-        <img :src="livroSelecionado.cover" alt="Capa" class="w-full h-auto mb-4 rounded" />
-        <h2 class="text-lg font-semibold mb-1">{{ livroSelecionado.title }}</h2>
-        <p><strong>Autor:</strong> {{ livroSelecionado.authorId }}</p>
-        <p><strong>Editora:</strong> {{ livroSelecionado.publisherId }}</p>
-        <p><strong>Ano:</strong> {{ livroSelecionado.year }}</p>
-        <p class="mt-2 text-sm text-gray-700">{{ livroSelecionado.sinopsis }}</p>
+    <Dialog v-model:visible="showModal" modal :header="livroSelecionado?.title" :style="{ width: '400px' }">
+      <div v-if="livroSelecionado" class="space-y-3">
+        <img :src="livroSelecionado.cover" alt="Capa" class="w-full h-auto mb-2 rounded shadow-md" />
+        <p><span class="font-medium">Autor:</span> {{ getAutorById(livroSelecionado.authorId).name }}</p>
+        <p><span class="font-medium">Editora:</span> {{ getEditoraById(livroSelecionado.publisherId).name }}</p>
+        <p><span class="font-medium">Ano:</span> {{ livroSelecionado.year }}</p>
+        <p class="text-gray-700 text-sm mt-2">{{ livroSelecionado.sinopsis }}</p>
       </div>
     </Dialog>
   </div>

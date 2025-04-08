@@ -3,6 +3,7 @@
     import Toast from 'primevue/toast';
     import { isArray } from '@/utils/utils.js';
 
+    // Rotas possíveis na sidebar
     const menus = [
         {
             label: 'Livros',
@@ -29,11 +30,11 @@
 </script>
 <template>
     <div class="flex flex-col w-full h-screen">
-        <div class="w-full p-3 text-3xl border-b-2 h-16 flex items-center">
+        <div class="w-full p-8 text-3xl border-b-2 h-16 pt-10 pl-10 pb-10 flex items-center bg-black text-orange-500 font-medium min-w-[500px]">
             Biblioteca - Manager
         </div>
         <div class="flex h-full">
-            <div class="w-32 border-r-2 h-full px-3 py-4">
+            <div class="w-48 border-r-2 h-full px-3 py-4">
                 <ul class="menu space-y-2">
                     <RouterLink
                         :to="menu.path"
@@ -46,7 +47,7 @@
                     </RouterLink>
                 </ul>
             </div>
-            <div class="p-4 w-full h-full">
+            <div class="p-5 w-full h-full">
                 <RouterView />
             </div>
         </div>
