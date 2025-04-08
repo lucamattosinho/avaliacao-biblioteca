@@ -30,7 +30,7 @@
 <template>
     <div class="flex flex-col w-full h-screen">
         <div class="w-full p-3 text-3xl border-b-2 h-16 flex items-center">
-            Livraria - Manager
+            Biblioteca - Manager
         </div>
         <div class="flex h-full">
             <div class="w-32 border-r-2 h-full px-3 py-4">
