@@ -4,11 +4,25 @@
     import { isArray } from '@/utils/utils.js';
 
     const menus = [
-
         {
-            label: 'Home',
-            icon: 'pi pi-home',
-            path: '/home'
+            label: 'Livros',
+            icon: 'pi pi-book',
+            path: '/livros'
+        },
+        {
+            label: 'Novo Livro',
+            icon: 'pi pi-plus',
+            path: '/livros/novo'
+        },
+        {
+            label: 'Novo Autor',
+            icon: 'pi pi-user-edit',
+            path: '/autores/novo'
+        },
+        {
+            label: 'Nova Editora',
+            icon: 'pi pi-building',
+            path: '/editoras/novo'
         },
     ];
 
@@ -16,7 +30,7 @@
 <template>
     <div class="flex flex-col w-full h-screen">
         <div class="w-full p-3 text-3xl border-b-2 h-16 flex items-center">
-            Header
+            Livraria - Manager
         </div>
         <div class="flex h-full">
             <div class="w-32 border-r-2 h-full px-3 py-4">
@@ -88,6 +102,7 @@
         padding: 8px 2px 0 6px;
         padding-bottom: 6px;
         transition-duration: 200ms;
+        
 
         span {
 
@@ -100,6 +115,8 @@
             color: var(--color-text-inverted);
         }
     }
+
+
 }
 
 </style>
