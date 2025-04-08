@@ -5,12 +5,15 @@ import { useAutorStore } from '@/store/useAutorStore'
 import { useEditoraStore } from '@/store/useEditoraStore'
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
+import { useToast } from 'primevue/usetoast'
 
 const route = useRoute()
 const router = useRouter()
 const { getLivroById, addLivro, updateLivro } = useLivroStore()
 const { getAutores } = useAutorStore()
 const { getEditoras } = useEditoraStore()
+
+const toast = useToast()
 
 const id = route.params.id
 
@@ -66,11 +69,17 @@ const salvarLivro = handleSubmit(values => {
     anoPublicacao: Number(values.year),
   }
 
-  isEditando
+  try{
+    isEditando
     ? updateLivro(Number(id), novoLivro)
     : addLivro(novoLivro)
 
-  router.push('/livros')
+    toast.add({severity: 'success', summary: "Sucesso!", detail: "Livro salvo com sucesso."})
+    router.push('/livros')
+  } catch(error){
+    toast.add({severity: 'error', summary: "Erro!", detail: "Não foi possível salvar o livro."})
+  }
+  
 })
 </script>
 
@@ -138,6 +147,7 @@ const salvarLivro = handleSubmit(values => {
         </button>
       </div>
     </form>
+    <Toast/>
   </div>
 </template>
 

@@ -4,6 +4,7 @@ import { useField, useForm } from 'vee-validate';
 import { useRoute, useRouter } from 'vue-router';
 import { computed, ref } from 'vue'
 import * as yup from 'yup'
+import { useToast } from 'primevue/usetoast'
 
 const { getAutorById, addAutor, updateAutor, getAutores } = useAutorStore()
 const route = useRoute()
@@ -11,6 +12,7 @@ const router = useRouter()
 
 const id = route.params.id
 
+const toast = useToast()
 
 // Necessário para distinção de um form que está editando
 // para um form que está criando um novo item
@@ -46,14 +48,20 @@ const salvarAutor = handleSubmit(values => {
       birthYear: values.birthYear,
     }
 
-    if(isEditando.value){
-      updateAutor(Number(id), novoAutor)
-      router.push(`/autores/${id}`)
+    try{
+      if(isEditando.value){
+        updateAutor(Number(id), novoAutor)
+        router.push(`/autores/${id}`)
+      }
+      else{
+        addAutor(novoAutor)
+        router.push(`/autores/${Math.max(...getAutores.value.map(a => a.id))}`)
+      }
+      toast.add({severity: 'success', summary: "Sucesso!", detail: "Autor salvo com sucesso."})
+    } catch(error){
+      toast.add({severity: 'error', summary: "Erro!", detail: "Não foi possível salvar o autor."})
     }
-    else{
-      addAutor(novoAutor)
-      router.push(`/autores/${Math.max(...getAutores.value.map(a => a.id))}`)
-    }
+
 })
 
 
@@ -78,9 +86,11 @@ const salvarAutor = handleSubmit(values => {
           <span class="text-red-500 text-sm">{{ errors.birthYear }}</span>
         </div>
   
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-          Salvar
-        </button>
+        <div class="flex justify-end">
+          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg transition">
+            Salvar
+          </button>
+        </div>
       </form>
     </div>
   </template>

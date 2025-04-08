@@ -5,12 +5,15 @@ import { useField, useForm } from 'vee-validate';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import * as yup from 'yup'
+import { useToast } from 'primevue/usetoast'
 
 const { getEditoraById, addEditora, updateEditora, getEditoras } = useEditoraStore()
 const route = useRoute()
 const router = useRouter()
 
 const id = route.params.id
+
+const toast = useToast()
 
 // Necessário para distinção de um form que está editando
 // para um form que está criando um novo item
@@ -36,11 +39,17 @@ const { value: name } = useField('name')
 
 // Salva a editora na memória
 const salvarEditora = handleSubmit(values => {
+
+  try{
     isEditando.value
     ? updateEditora(Number(id), values)
     : addEditora(values)
-
+    toast.add({severity: 'success', summary: "Sucesso!", detail: "Editora salva com sucesso."})
     router.push(`/editoras/${isEditando.value ? id : Math.max(...getEditoras.value.map(e => e.id))}`)
+  } catch(error){
+    toast.add({severity: 'error', summary: "Erro!", detail: "Não foi possível salvar a editora."})
+  }
+  
 })
 
 
@@ -60,9 +69,11 @@ const salvarEditora = handleSubmit(values => {
           <span class="text-red-500 text-sm">{{ errors.name }}</span>
         </div>
   
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-          Salvar
-        </button>
+        <div class="flex justify-end">
+          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg transition">
+            Salvar
+          </button>
+        </div>
       </form>
     </div>
   </template>
